@@ -3,6 +3,8 @@ from ssd1306 import SSD1306_I2C
 import time
 import random
 
+#SW0 = start, SW1 = right, SW2 = left
+
 class Snake:
     def __init__(self, speed, width, height):
         self.width = width
