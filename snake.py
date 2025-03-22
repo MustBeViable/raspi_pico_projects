@@ -4,7 +4,7 @@ import time
 import random
 
 class Snake:
-    def __init__(self):
+    def __init__(self, speed):
         self.horizontal = True
         self.diagonal = False
         self.body = [(0,30)]
@@ -12,12 +12,22 @@ class Snake:
         self.length = 8
         self.food = None
         self.score = 0
+        #Sets the speed of the snake. The high value means slower and low value means faster.
+        self.speed = speed
+        
+    def snake_speed(self):
+        if self.speed - self.score*20 <= 0:
+            self.speed = 1
+        else:
+            self.speed -= self.score*20
         
     def start(self):
         self.state()
     
     def game_over(self):
         while pause.value() == 1:
+            self.horizontal = True
+            self.diagonal = False
             self.body = [(0,30)]
             oled.fill(0)
             oled.text("Game over!",0,0)
@@ -63,10 +73,8 @@ class Snake:
             oled.fill(0)
             self.food_spawn()
             if self.horizontal:
-                #print('moving horizontal')
                 self.state = self.horizontal_move_right
             if self.diagonal:
-                print('moving diagonal')
                 self.state = self.diagonal_move_down
     
     def horizontal_move_right(self):
@@ -77,13 +85,12 @@ class Snake:
                 self.update_body(head)
                 for i in range(4):
                     if self.body[-1] == self.food[i]:
-                        print(f"length: {self.length}")
-                        self.length += 1
+                        self.length += 2
                         self.score += 1
-                        print(f"length: {self.length}")
                         self.food_spawn()
-                        time.sleep(0.1)
-                time.sleep(0.1)
+                        time.sleep_ms(self.speed)
+                        self.snake_speed()
+                time.sleep_ms(self.speed)
             else:
                 self.game_over()
         self.diagonal = True
@@ -107,13 +114,12 @@ class Snake:
                 self.update_body(head)
                 for i in range(4):
                     if self.body[-1] == self.food[i]:
-                        print(f"length: {self.length}")
-                        self.length += 1
+                        self.length += 2
                         self.score += 1
-                        print(f"length: {self.length}")
                         self.food_spawn()
-                        time.sleep(0.1)
-                time.sleep(0.1)
+                        time.sleep_ms(self.speed)
+                        self.snake_speed()
+                time.sleep_ms(self.speed)
             else:
                 self.game_over()
         self.diagonal = True
@@ -137,13 +143,12 @@ class Snake:
                 self.update_body(head)
                 for i in range(4):
                     if self.body[-1] == self.food[i]:
-                        print(f"length: {self.length}")
-                        self.length += 1
+                        self.length += 2
                         self.score += 1
-                        print(f"length: {self.length}")
                         self.food_spawn()
-                        time.sleep(0.1)
-                time.sleep(0.1)
+                        time.sleep_ms(self.speed)
+                        self.snake_speed()
+                time.sleep_ms(self.speed)
             else:
                 self.game_over()
         self.diagonal = False
@@ -167,13 +172,12 @@ class Snake:
                 self.update_body(head)
                 for i in range(4):
                     if self.body[-1] == self.food[i]:
-                        print(f"length: {self.length}")
-                        self.length += 1
+                        self.length += 2
                         self.score += 1
-                        print(f"length: {self.length}")
                         self.food_spawn()
-                        time.sleep(0.1)
-                time.sleep(0.1)
+                        time.sleep_ms(self.speed)
+                        self.snake_speed()
+                time.sleep_ms(self.speed)
             else:
                 self.game_over()
         self.diagonal = False
@@ -203,7 +207,8 @@ turn_right = Pin(8, Pin.IN, Pin.PULL_UP)
 
 pause = Pin(9, Pin.IN, Pin.PULL_UP)
 
-snake = Snake()
+#Set the snakes initial speed. It is time.sleep_ms value -> higher value means slower snake and lower value means faster snake
+snake = Snake(100)
 
 oled.fill(0)
 
