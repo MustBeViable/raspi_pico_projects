@@ -4,10 +4,12 @@ import time
 import random
 
 class Snake:
-    def __init__(self, speed):
+    def __init__(self, speed, width, height):
+        self.width = width
+        self.height = height
         self.horizontal = True
         self.diagonal = False
-        self.body = [(0,30)]
+        self.body = [(1,30)]
         self.state = self.pause
         self.length = 8
         self.food = None
@@ -23,21 +25,34 @@ class Snake:
         
     def start(self):
         self.state()
+        
+    def borders(self):
+        for x in range(self.width):
+            oled.pixel(x,0,1)
+            oled.pixel(x,self.height-1,1)
+        for y in range(self.height):
+            oled.pixel(0,y,1)
+            oled.pixel(self.width-1, y, 1)
+        oled.show()
+            
     
     def game_over(self):
         while pause.value() == 1:
             self.horizontal = True
             self.diagonal = False
-            self.body = [(0,30)]
+            self.body = [(1,30)]
             oled.fill(0)
             oled.text("Game over!",0,0)
             oled.text(f"Score: {self.score}", 0, 10)
+            oled.text("Press start to", 0, 20)
+            oled.text("play!", 0, 30)
             oled.show()
         if pause.value() == 0:
             oled.fill(0)
             self.score = 0
             self.food_spawn()
             self.state = self.horizontal_move_right
+            self.borders()
             self.start()
             
         
@@ -69,8 +84,12 @@ class Snake:
             oled.show()
     
     def pause(self):
+        oled.text("Press start to", 0, 0)
+        oled.text("play!", 0, 10)
+        oled.show()
         if pause.value() == 0:
             oled.fill(0)
+            self.borders()
             self.food_spawn()
             if self.horizontal:
                 self.state = self.horizontal_move_right
@@ -80,7 +99,7 @@ class Snake:
     def horizontal_move_right(self):
         while self.horizontal and turn_left.value() == 1 and turn_right.value() == 1:
             headx, heady = self.body[-1]
-            if headx < 127:
+            if headx < self.width-1:
                 head = (headx+1, heady)
                 self.update_body(head)
                 for i in range(4):
@@ -138,7 +157,7 @@ class Snake:
     def diagonal_move_down(self):
         while self.diagonal and turn_left.value() == 1 and turn_right.value() == 1:
             headx, heady = self.body[-1]
-            if heady < 63:
+            if heady < self.height-1:
                 head = (headx, heady+1)
                 self.update_body(head)
                 for i in range(4):
@@ -208,7 +227,7 @@ turn_right = Pin(8, Pin.IN, Pin.PULL_UP)
 pause = Pin(9, Pin.IN, Pin.PULL_UP)
 
 #Set the snakes initial speed. It is time.sleep_ms value -> higher value means slower snake and lower value means faster snake
-snake = Snake(100)
+snake = Snake(100, oled_width, oled_height)
 
 oled.fill(0)
 
