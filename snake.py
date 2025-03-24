@@ -1,5 +1,5 @@
-from machine import UART, Pin, I2C, ADC
-from ssd1306 import SSD1306_I2C
+from machine import UART, Pin, I2C, ADC # type: ignore
+from ssd1306 import SSD1306_I2C # type: ignore
 import time
 import random
 
